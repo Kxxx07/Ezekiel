@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>for you</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500;1,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0b0712;
+    --bg-alt: #140b21;
+    --purple-deep: #34195a;
+    --purple-mid: #6d3fae;
+    --accent: #b083f0;
+    --accent-soft: #8a5cd6;
+    --lavender: #efe6fb;
+    --muted: #ad98c9;
+    --line: rgba(176,131,240,0.25);
+  }
+
+  *{ box-sizing: border-box; }
+
+  html,body{
+    margin:0; padding:0; height:100%;
+    background: radial-gradient(120% 90% at 50% -10%, var(--purple-deep) 0%, var(--bg) 55%);
+    color: var(--lavender);
+    font-family: 'Manrope', sans-serif;
+    overflow: hidden;
+  }
+
+  #stars{
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  }
+  .star{
+    position: absolute; border-radius: 50%;
+    background: var(--lavender);
+    opacity: .25;
+    animation: twinkle 4.5s ease-in-out infinite;
+  }
+  @keyframes twinkle{
+    0%,100%{ opacity: .12; }
+    50%{ opacity: .65; }
+  }
+
+  .app{
+    position: relative; z-index: 1;
+    height: 100vh; width: 100vw;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .page{
+    display: none;
+    width: min(640px, 88vw);
+    max-height: 78vh;
+    overflow-y: auto;
+    text-align: center;
+    padding: 32px 8px 12px;
+    animation: rise .7s ease both;
+  }
+  .page.active{ display: block; }
+
+  @keyframes rise{
+    from{ opacity: 0; transform: translateY(18px); }
+    to{ opacity: 1; transform: translateY(0); }
+  }
+
+  .kicker{
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(16px, 2.2vw, 19px);
+    color: var(--muted);
+    margin: 0 0 10px;
+    letter-spacing: .02em;
+  }
+
+  h1{
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: clamp(32px, 5.4vw, 52px);
+    line-height: 1.15;
+    margin: 0 0 18px;
+    color: var(--lavender);
+  }
+
+  p.lead{
+    font-size: clamp(15px, 1.7vw, 17px);
+    line-height: 1.7;
+    color: var(--muted);
+    max-width: 46ch;
+    margin: 0 auto 8px;
+  }
+
+  .letter{
+    text-align: left;
+    font-size: clamp(15.5px, 1.8vw, 18px);
+    line-height: 1.85;
+    color: var(--lavender);
+    max-width: 52ch;
+    margin: 22px auto 8px;
+  }
+  .letter p{ margin: 0 0 16px; }
+  .signature{
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 22px;
+    color: var(--accent);
+    margin-top: 22px;
+  }
+
+  .btn{
+    font-family: 'Manrope', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--lavender);
+    background: linear-gradient(135deg, var(--purple-mid), var(--accent-soft));
+    border: none;
+    padding: 13px 30px;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(109,63,174,0.35);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .btn:hover{ transform: translateY(-2px); box-shadow: 0 12px 30px rgba(176,131,240,0.4); }
+  .btn:focus-visible{ outline: 2px solid var(--accent); outline-offset: 3px; }
+  .btn:active{ transform: translateY(0); }
+
+  .btn.ghost{
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    box-shadow: none;
+  }
+  .btn.ghost:hover{ color: var(--lavender); border-color: var(--accent); }
+
+  .cta-row{
+    margin-top: 28px;
+    display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+  }
+
+  /* gallery */
+  .gallery{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+    margin: 26px 0 6px;
+  }
+  .frame{
+    border: 1px dashed var(--line);
+    border-radius: 14px;
+    aspect-ratio: 4/5;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 10px;
+    background: linear-gradient(160deg, rgba(109,63,174,0.14), rgba(11,7,18,0.4));
+    padding: 12px;
+  }
+  .frame svg{ width: 30px; height: 30px; opacity: .55; }
+  .frame span{
+    font-size: 12.5px; color: var(--muted); line-height: 1.4;
+  }
+  .frame em{
+    font-family: 'Cormorant Garamond', serif; font-style: italic; color: var(--accent); display:block; font-size: 15px; margin-top: 2px;
+  }
+
+  /* ask page */
+  .ask-wrap{
+    position: relative;
+    min-height: 190px;
+    display: flex; align-items: center; justify-content: center; gap: 18px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+  }
+  #noBtn{
+    position: relative;
+    transition: left .18s ease, top .18s ease, transform .18s ease;
+  }
+
+  /* nav */
+  .nav{
+    position: fixed; left: 0; right: 0; bottom: 22px;
+    z-index: 2;
+    display: flex; align-items: center; justify-content: center; gap: 18px;
+  }
+  .nav button{
+    background: none; border: none; color: var(--muted);
+    font-family: 'Manrope', sans-serif; font-size: 13px; font-weight: 600;
+    cursor: pointer; padding: 6px 10px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .nav button:hover{ color: var(--lavender); }
+  .nav button:disabled{ opacity: .25; cursor: default; pointer-events: none; }
+  .dots{ display: flex; gap: 7px; }
+  .dot{
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--line);
+    transition: background .2s ease, transform .2s ease;
+  }
+  .dot.on{ background: var(--accent); transform: scale(1.3); }
+
+  .hidden{ display: none !important; }
+
+  @media (max-width: 480px){
+    .page{ max-height: 70vh; }
+    .nav{ bottom: 14px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .star{ animation: none; opacity: .3; }
+    .page{ animation: none; }
+    #noBtn{ transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="stars"></div>
+
+<div class="app">
+
+  <!-- PAGE 1: HOME -->
+  <section class="page active" data-page="1">
+    <p class="kicker">a little something, just for you</p>
+    <h1>I've been trying to find the right way to say this.</h1>
+    <p class="lead">So instead of just texting you, I made you a whole website. Yes, really. Take your time.</p>
+    <div class="cta-row">
+      <button class="btn" onclick="goTo(2)">Okay, show me</button>
+    </div>
+  </section>
+
+  <!-- PAGE 2: PICTURES -->
+ <section class="page" data-page="2">
+    <p class="kicker">before I say it</p>
+    <h1>A few of my favorite moments</h1>
+    <p class="lead">I actually took pictures of you secretly...</p>
+    <div class="gallery">
+      <div class="frame" style="border-style: solid; padding: 0; overflow: hidden;">
+        <img src="AYAAA1.png" alt="the first time we talked" style="width:100%; height:78%; object-fit: cover;">
+        <em>the first time we talked</em>
+      </div>
+      <div class="frame" style="border-style: solid; padding: 0; overflow: hidden;">
+        <img src="AYAAA2.jpg" alt="the one that made me smile" style="width:100%; height:78%; object-fit: cover;">
+        <em>the one that made me smile</em>
+      </div>
+      <div class="frame" style="border-style: solid; padding: 0; overflow: hidden;">
+        <img src="AYAAA3.jpg" alt="my favorite one" style="width:100%; height:78%; object-fit: cover;">
+        <em>my favorite one</em>
+      </div>
+    </div>
+    <div class="cta-row">
+      <button class="btn" onclick="goTo(3)">Keep going</button>
+    </div>
+  </section>
+  <!-- PAGE 3: CONFESSING -->
+  <section class="page" data-page="3">
+    <p class="kicker">okay, here it is</p>
+    <h1>The truth</h1>
+    <div class="letter">
+      <p>I don't really know how to say this without it sounding rehearsed, even though I've rewritten it in my head about thirty times.</p>
+      <p>Did you remember nung sinabi ko sayo yung first interaction natin sa oriental? The time na malditahan mo ako. Akala ko at first, ma babadtrip ako or what. But guess what? I actually ask ju kung sino ka idk why?</p>
+      <p>Then nag send na ako sayo ng tiktok vid and i was surprised na nag reply ka sakin and nag tuloy tuloy until we met in person.</p>
+      <p>I wasn't sure kung ano ba talaga not until I realize na every notifications sa phone ko sana ikaw yun.</p>
+    </div>
+    <div class="signature">— Ezekiel</div>
+    <div class="cta-row">
+      <button class="btn" onclick="goTo(4)">I'm still here</button>
+    </div>
+  </section>
+
+  <!-- PAGE 4: ASKING HER OUT -->
+  <section class="page" data-page="4">
+    <p class="kicker">so, now that you know</p>
+    <h1 id="askHeadline">Will you go out with me?</h1>
+    <p class="lead" id="askSub">No pressure. Just an honest question from someone who's been meaning to ask it for a while.</p>
+    <div class="ask-wrap" id="askWrap">
+      <button class="btn" id="yesBtn" onclick="sayYes()">Yes</button>
+      <button class="btn ghost" id="noBtn" onmouseenter="dodge(this)" ontouchstart="dodge(this); event.preventDefault();" onclick="dodge(this)">No</button>
+    </div>
+  </section>
+
+  <!-- PAGE 5: GOODBYE -->
+  <section class="page" data-page="5">
+    <p class="kicker" id="byeKicker">whatever happens next</p>
+    <h1 id="byeHeadline">Thank you for reading all the way here.</h1>
+    <p class="lead" id="byeSub">That took a bit of courage to send, so it means a lot that you made it to the end.</p>
+    <div class="cta-row">
+      <button class="btn ghost" onclick="restart()">Start over</button>
+    </div>
+  </section>
+
+</div>
+
+<div class="nav">
+  <button id="backBtn" onclick="prevPage()">← back</button>
+  <div class="dots" id="dots"></div>
+  <button id="fwdBtn" onclick="nextPage()">next →</button>
+</div>
+
+<script>
+  const totalPages = 5;
+  let current = 1;
+  let saidYes = false;
+
+  const dotsEl = document.getElementById('dots');
+  for(let i=1;i<=totalPages;i++){
+    const d = document.createElement('div');
+    d.className = 'dot' + (i===1 ? ' on' : '');
+    d.dataset.i = i;
+    dotsEl.appendChild(d);
+  }
+
+  function render(){
+    document.querySelectorAll('.page').forEach(p=>{
+      p.classList.toggle('active', Number(p.dataset.page) === current);
+    });
+    document.querySelectorAll('.dot').forEach(d=>{
+      d.classList.toggle('on', Number(d.dataset.i) === current);
+    });
+    document.getElementById('backBtn').disabled = current === 1;
+    document.getElementById('fwdBtn').disabled = current === totalPages;
+    document.getElementById('fwdBtn').classList.toggle('hidden', current === 4 || current === totalPages);
+  }
+
+  function goTo(n){
+    current = Math.min(Math.max(n,1), totalPages);
+    render();
+  }
+  function nextPage(){ if(current < totalPages && current !== 4) goTo(current+1); }
+  function prevPage(){ if(current > 1) goTo(current-1); }
+
+  function restart(){
+    saidYes = false;
+    document.getElementById('byeKicker').textContent = 'whatever happens next';
+    document.getElementById('byeHeadline').textContent = "Thank you for reading all the way here.";
+    document.getElementById('byeSub').textContent = "That took a bit of courage to send, so it means a lot that you made it to the end.";
+    goTo(1);
+  }
+
+  // "No" button playfully dodges the cursor / tap
+  const dodgeLines = ["No", "Are you sure?", "Really?", "Think again", "Last chance...", "Okay, okay"];
+  let dodgeCount = 0;
+  function dodge(el){
+    const wrap = document.getElementById('askWrap').getBoundingClientRect();
+    const btn = el.getBoundingClientRect();
+    const maxX = wrap.width - btn.width - 8;
+    const maxY = wrap.height - btn.height - 8;
+    const x = Math.max(8, Math.random() * maxX);
+    const y = Math.max(8, Math.random() * maxY);
+    el.style.position = 'absolute';
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+    dodgeCount = Math.min(dodgeCount + 1, dodgeLines.length - 1);
+    el.textContent = dodgeLines[dodgeCount];
+  }
+
+  function sayYes(){
+    saidYes = true;
+    document.getElementById('byeKicker').textContent = 'okay wow';
+    document.getElementById('byeHeadline').textContent = "I'm smiling so much right now.";
+    document.getElementById('byeSub').textContent = "I'll text you about when and where — I already have a few ideas. Thank you for saying yes.";
+    goTo(5);
+  }
+
+  render();
+
+  // ambient stars
+  const starField = document.getElementById('stars');
+  const starCount = window.innerWidth < 500 ? 26 : 50;
+  for(let i=0;i<starCount;i++){
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 2 + 1;
+    s.style.width = size + 'px';
+    s.style.height = size + 'px';
+    s.style.left = Math.random() * 100 + 'vw';
+    s.style.top = Math.random() * 100 + 'vh';
+    s.style.animationDelay = (Math.random() * 4) + 's';
+    starField.appendChild(s);
+  }
+</script>
+
+</body>
+</html>
